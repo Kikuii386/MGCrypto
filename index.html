@@ -57,6 +57,24 @@ tr.updated {
   background-color: #eafce9;
   transition: background-color 1s ease;
 }
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed; /* ✅ เพิ่มบรรทัดนี้ */
+  }
+
+  th:nth-child(1), td:nth-child(1) { width: 120px; }
+  th:nth-child(2), td:nth-child(2) { width: 80px; }
+  th:nth-child(3), td:nth-child(3) { width: 110px; }
+  th:nth-child(4), td:nth-child(4) { width: 110px; }
+  th:nth-child(5), td:nth-child(5) { width: 120px; }
+  th:nth-child(6), td:nth-child(6) { width: 120px; }
+  th:nth-child(7), td:nth-child(7) { width: 100px; }
+
+  td, th {
+    white-space: nowrap;
+  }
 </style>
 </head>
 <body>
