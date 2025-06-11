@@ -6,58 +6,40 @@
   <title>Crypto Tracker</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    .port-summary { display: flex; gap: 20px; margin-bottom: 20px; }
+    .port-summary { display: flex; gap: 20px; margin-bottom: 20px; justify-content: center; }
     .card {
       flex: 1;
       background-color: #f4f4f4;
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s;
     }
-    .card h2 { margin-top: 0; font-size: 18px; text-align: center; }
-    .card p { margin: 6px 0; font-weight: bold; text-align: center; }
+    .card:hover { background-color: #e0e0e0; }
+    .card.active { background-color: #bee3f8 !important; }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background-color: #f0f0f0; }
-    td.positive { color: green; }
-    td.negative { color: red; }
-    tr.updated { background-color: #e6ffe6; transition: background-color 1s ease; }
   </style>
 </head>
 <body>
   <h1 style="text-align:center">🌻💖🐻Crypto Tracker😍⭐🍕</h1>
 
   <div class="port-summary" id="summary-cards">
-    <div class="card" style="background-color: #d1e7dd;">
-      <h2>📈 HIGH PORT</h2>
-      <p id="high-cost">Avg Cost: -</p>
-      <p id="high-qty">Quantity: -</p>
-      <p id="high-usd">USD Value: -</p>
-    </div>
-    <div class="card" style="background-color: #fff3cd;">
-      <h2>📉 LOW PORT</h2>
-      <p id="low-cost">Avg Cost: -</p>
-      <p id="low-qty">Quantity: -</p>
-      <p id="low-usd">USD Value: -</p>
-    </div>
-    <div class="card" style="background-color: #cfe2ff;">
-      <h2>💰 TOTAL</h2>
-      <p id="total-cost">Avg Cost: -</p>
-      <p id="total-qty">Quantity: -</p>
-      <p id="total-usd">USD Value: -</p>
-    </div>
+    <div class="card" id="highBtn">📈 HIGH</div>
+    <div class="card" id="lowBtn">📉 LOW</div>
+    <div class="card" id="totalBtn">💰 TOTAL</div>
   </div>
 
   <table>
     <thead>
       <tr>
+        <th>Status</th>
         <th>Token</th>
         <th>Chain</th>
-        <th>Quantity</th>
-        <th>Entry Price</th>
-        <th>Current Price</th>
-        <th>Total Value</th>
-        <th>Profit %</th>
+        <th>Contract</th>
       </tr>
     </thead>
     <tbody id="price-table"></tbody>
@@ -71,48 +53,68 @@
       const text = await res.text();
       const json = JSON.parse(text.substr(47).slice(0, -2));
       const rows = json.table.rows;
-      return rows.map(r => ({
+      return rows.slice(3).map(r => ({
+        status: r.c[1]?.v?.trim(),
         name: r.c[2]?.v?.trim(),
         chain: r.c[3]?.v?.trim(),
         contract: r.c[4]?.v?.trim(),
-        quantity: parseFloat(r.c[5]?.v || 0),
-        entry: parseFloat(r.c[6]?.v || 0),
-        high: {
-          cost: parseFloat(r.c[7]?.v || 0),
-          qty: parseFloat(r.c[8]?.v || 0),
-          usd: parseFloat(r.c[9]?.v || 0)
-        },
-        low: {
-          cost: parseFloat(r.c[10]?.v || 0),
-          qty: parseFloat(r.c[11]?.v || 0),
-          usd: parseFloat(r.c[12]?.v || 0)
-        },
-        total: {
-          cost: parseFloat(r.c[13]?.v || 0),
-          qty: parseFloat(r.c[14]?.v || 0),
-          usd: parseFloat(r.c[15]?.v || 0)
-        }
-      })).filter(t => t.contract && t.quantity > 0);
+        highCost: parseFloat(r.c[5]?.v || 0),
+        lowCost: parseFloat(r.c[8]?.v || 0),
+        totalCost: parseFloat(r.c[11]?.v || 0)
+      })).filter(t =>
+        t.status?.trim() &&
+        t.name?.trim() &&
+        t.chain?.trim() &&
+        t.contract?.trim()
+      );
     }
 
-    async function fetchAndRender() {
-      const tokens = await fetchSheetTokens();
-      const summary = tokens.at(-1); // assume last row is summary
-
-      document.getElementById('high-cost').textContent = `Avg Cost: $${summary.high.cost.toFixed(6)}`;
-      document.getElementById('high-qty').textContent = `Quantity: ${summary.high.qty.toLocaleString()}`;
-      document.getElementById('high-usd').textContent = `USD Value: $${summary.high.usd.toLocaleString()}`;
-
-      document.getElementById('low-cost').textContent = `Avg Cost: $${summary.low.cost.toFixed(6)}`;
-      document.getElementById('low-qty').textContent = `Quantity: ${summary.low.qty.toLocaleString()}`;
-      document.getElementById('low-usd').textContent = `USD Value: $${summary.low.usd.toLocaleString()}`;
-
-      document.getElementById('total-cost').textContent = `Avg Cost: $${summary.total.cost.toFixed(6)}`;
-      document.getElementById('total-qty').textContent = `Quantity: ${summary.total.qty.toLocaleString()}`;
-      document.getElementById('total-usd').textContent = `USD Value: $${summary.total.usd.toLocaleString()}`;
+    function renderRows(data) {
+      const tbody = document.getElementById('price-table');
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.status}</td>
+          <td>${row.name}</td>
+          <td>${row.chain}</td>
+          <td>${row.contract}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
-    fetchAndRender();
+    async function main() {
+      const data = await fetchSheetTokens();
+
+      const high = data.filter(d => d.highCost > 0);
+      const low = data.filter(d => d.lowCost > 0);
+      const total = data.filter(d => d.totalCost > 0);
+
+      const highBtn = document.getElementById('highBtn');
+      const lowBtn = document.getElementById('lowBtn');
+      const totalBtn = document.getElementById('totalBtn');
+
+      function clearActive() {
+        highBtn.classList.remove('active');
+        lowBtn.classList.remove('active');
+        totalBtn.classList.remove('active');
+      }
+
+      highBtn.onclick = () => {
+        clearActive(); highBtn.classList.add('active'); renderRows(high);
+      }
+      lowBtn.onclick = () => {
+        clearActive(); lowBtn.classList.add('active'); renderRows(low);
+      }
+      totalBtn.onclick = () => {
+        clearActive(); totalBtn.classList.add('active'); renderRows(total);
+      }
+
+      totalBtn.click(); // default view
+    }
+
+    main();
   </script>
 </body>
 </html>
