@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta property="og:title" content="🌻💖🐻My Crypto Tracker😍⭐🍕">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crypto Tracker</title>
@@ -22,6 +23,9 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background-color: #f0f0f0; }
+    td.positive { color: green; }
+    td.negative { color: red; }
+    tr.updated { background-color: #e6ffe6; transition: background-color 1s ease; }
   </style>
 </head>
 <body>
@@ -36,12 +40,9 @@
   <table>
     <thead>
       <tr>
-        <th>Status</th>
         <th>Token</th>
         <th>Chain</th>
-        <th>Contract</th>
         <th>Quantity</th>
-        <th>Investment</th>
         <th>Entry Price</th>
         <th>Current Price</th>
         <th>Total Value</th>
@@ -53,45 +54,53 @@
 
   <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/154YVMJYcJ8_5q_hNknll3XwVwIGvNst4G13ACYpywdY/gviz/tq?tqx=out:json&sheet=OPEN%20TRADES';
+    let allData = [];
+    let currentType = 'total';
+    let oldPrices = {};
 
-async function fetchSheetTokens() {
-  const res = await fetch(sheetUrl);
-  const text = await res.text();
-  const json = JSON.parse(text.substr(47).slice(0, -2));
-  const rows = json.table.rows;
+    async function fetchSheetTokens() {
+      const res = await fetch(sheetUrl);
+      const text = await res.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows;
 
-  return rows.slice(3).map(r => ({
-    status: r.c[1]?.v?.trim(),
-    name: r.c[2]?.v?.trim(),
-    chain: r.c[3]?.v?.trim(),
-    contract: r.c[4]?.v?.trim(),
+      return rows.slice(3).map(r => ({
+        name: r.c[2]?.v?.trim(),
+        chain: r.c[3]?.v?.trim(),
+        contract: r.c[4]?.v?.trim(),
 
-    // HIGH
-    highEntry: parseFloat(r.c[5]?.v || 0),
-    highQty: parseFloat(r.c[6]?.v || 0),
-    highInv: parseFloat(r.c[7]?.v || 0),
+        highEntry: parseFloat(r.c[5]?.v || 0),
+        highQty: parseFloat(r.c[6]?.v || 0),
+        highInv: parseFloat(r.c[7]?.v || 0),
 
-    // LOW
-    lowEntry: parseFloat(r.c[8]?.v || 0),
-    lowQty: parseFloat(r.c[9]?.v || 0),
-    lowInv: parseFloat(r.c[10]?.v || 0),
+        lowEntry: parseFloat(r.c[8]?.v || 0),
+        lowQty: parseFloat(r.c[9]?.v || 0),
+        lowInv: parseFloat(r.c[10]?.v || 0),
 
-    // TOTAL
-    totalEntry: parseFloat(r.c[11]?.v || 0),
-    totalQty: parseFloat(r.c[12]?.v || 0),
-    totalInv: parseFloat(r.c[13]?.v || 0),
+        totalEntry: parseFloat(r.c[11]?.v || 0),
+        totalQty: parseFloat(r.c[12]?.v || 0),
+        totalInv: parseFloat(r.c[13]?.v || 0),
+      })).filter(t => t.contract);
+    }
 
-    // Current price & profit (ใช้ร่วมกัน)
-    current: parseFloat(r.c[14]?.v || 0),
-    value: parseFloat(r.c[15]?.v || 0),
-    profit: parseFloat(r.c[16]?.v || 0),
-  })).filter(t =>
-    t.status?.trim() &&
-    t.name?.trim() &&
-    t.chain?.trim() &&
-    t.contract?.trim()
-  );
-}
+    async function enrichWithPrices(data) {
+      return await Promise.all(data.map(async row => {
+        try {
+          const url = `https://api.dexscreener.com/latest/dex/tokens/${row.contract}`;
+          const res = await fetch(url);
+          const json = await res.json();
+          const info = json.pairs?.[0];
+          if (!info) return null;
+
+          const currentPrice = parseFloat(info.priceUsd);
+          return { ...row, currentPrice };
+        } catch (e) {
+          console.error('Error fetching price for', row.contract, e);
+          return null;
+        }
+      })).then(result => result.filter(Boolean));
+    }
+
     function renderRows(data, type) {
       const tbody = document.getElementById('price-table');
       tbody.innerHTML = '';
@@ -115,51 +124,87 @@ async function fetchSheetTokens() {
           inv = row.totalInv;
         }
 
+        const totalValue = qty * row.currentPrice;
+        const profitPct = ((row.currentPrice - entry) / entry) * 100;
+        const changeClass = profitPct >= 0 ? 'positive' : 'negative';
+
         const tr = document.createElement('tr');
+        tr.setAttribute('id', row.contract);
         tr.innerHTML = `
-          <td>${row.status}</td>
           <td>${row.name}</td>
           <td>${row.chain}</td>
-          <td>${row.contract}</td>
           <td>${qty.toLocaleString()}</td>
-          <td>$${inv.toLocaleString()}</td>
           <td>$${entry.toFixed(6)}</td>
-          <td>$${row.current.toFixed(6)}</td>
-          <td>$${row.value.toLocaleString()}</td>
-          <td>${row.profit.toFixed(2)}%</td>
+          <td class="price">$${row.currentPrice.toFixed(6)}</td>
+          <td class="value">$${totalValue.toFixed(2)}</td>
+          <td class="profit ${changeClass}">${profitPct.toFixed(2)}%</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
+    async function refreshPrices() {
+      for (let row of allData) {
+        try {
+          const url = `https://api.dexscreener.com/latest/dex/tokens/${row.contract}`;
+          const res = await fetch(url);
+          const json = await res.json();
+          const info = json.pairs?.[0];
+          if (!info) continue;
+
+          const newPrice = parseFloat(info.priceUsd);
+          const tr = document.getElementById(row.contract);
+          if (!tr) continue;
+
+          const entry = currentType === 'high' ? row.highEntry : currentType === 'low' ? row.lowEntry : row.totalEntry;
+          const qty = currentType === 'high' ? row.highQty : currentType === 'low' ? row.lowQty : row.totalQty;
+          const newTotalValue = newPrice * qty;
+          const newProfitPct = ((newPrice - entry) / entry) * 100;
+
+          if (Math.abs(oldPrices[row.contract] - newPrice) > 0.000001) {
+            oldPrices[row.contract] = newPrice;
+            tr.querySelector('.price').textContent = `$${newPrice.toFixed(6)}`;
+            tr.querySelector('.value').textContent = `$${newTotalValue.toFixed(2)}`;
+            const profitTd = tr.querySelector('.profit');
+            profitTd.textContent = `${newProfitPct.toFixed(2)}%`;
+            profitTd.className = `profit ${newProfitPct >= 0 ? 'positive' : 'negative'}`;
+            tr.classList.add('updated');
+            setTimeout(() => tr.classList.remove('updated'), 1000);
+          }
+        } catch (e) {
+          console.error('Error updating price for', row.contract, e);
+        }
+      }
+    }
+
     async function main() {
-      const data = await fetchSheetTokens();
+      let rawData = await fetchSheetTokens();
+      allData = await enrichWithPrices(rawData);
+      allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
+      renderRows(allData, currentType);
 
-      const high = data.filter(d => d.highInvestment > 0);
-      const low = data.filter(d => d.lowInvestment > 0);
-      const total = data.filter(d => d.totalInvestment > 0);
-
-      const highBtn = document.getElementById('highBtn');
-      const lowBtn = document.getElementById('lowBtn');
-      const totalBtn = document.getElementById('totalBtn');
-
-      function clearActive() {
-        highBtn.classList.remove('active');
-        lowBtn.classList.remove('active');
-        totalBtn.classList.remove('active');
+      document.getElementById('highBtn').onclick = () => {
+        currentType = 'high';
+        setActive('highBtn');
+        renderRows(allData, 'high');
       }
+      document.getElementById('lowBtn').onclick = () => {
+        currentType = 'low';
+        setActive('lowBtn');
+        renderRows(allData, 'low');
+      }
+      document.getElementById('totalBtn').onclick = () => {
+        currentType = 'total';
+        setActive('totalBtn');
+        renderRows(allData, 'total');
+      }
+      setActive('totalBtn');
+      setInterval(refreshPrices, 10000);
+    }
 
-      highBtn.onclick = () => {
-        clearActive(); highBtn.classList.add('active'); renderRows(data, 'high');
-      }
-      lowBtn.onclick = () => {
-        clearActive(); lowBtn.classList.add('active'); renderRows(data, 'low');
-      }
-      totalBtn.onclick = () => {
-        clearActive(); totalBtn.classList.add('active'); renderRows(data, 'total');
-      }
-
-      totalBtn.click(); // default view
+    function setActive(id) {
+      document.querySelectorAll('.card').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
 
     main();
