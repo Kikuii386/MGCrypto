@@ -251,26 +251,31 @@ async function enrichWithPrices(data) {
           allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
           renderRows(allData, currentType);
 
-          document.getElementById('portfolioSelect').addEventListener('change', e => {
-          currentType = e.target.value;
-          renderRows(allData, currentType);
-          });
-          setInterval(refreshPrices, 10000);
+      document.getElementById('portfolioSelect').addEventListener('change', e => {
+        currentType = e.target.value;
+        renderRows(allData, currentType);
+      });
+
+      setInterval(refreshPrices, 10000);  // ⬅️ ปิดฟังก์ชัน main ตรงนี้
+    } // ✅ ปิด main
 
     function setActive(id) {
       document.querySelectorAll('.card').forEach(btn => btn.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
+
     function updateCounts(data) {
-    const high = data.filter(d => d.highInv > 0);
-    const low = data.filter(d => d.lowInv > 0);
-    const total = data.filter(d => d.totalInv > 0);
+      const high = data.filter(d => d.highInv > 0);
+      const low = data.filter(d => d.lowInv > 0);
+      const total = data.filter(d => d.totalInv > 0);
 
       document.getElementById('portfolioSelect').options[0].textContent = `HIGH (${high.length})`;
       document.getElementById('portfolioSelect').options[1].textContent = `LOW (${low.length})`;
       document.getElementById('portfolioSelect').options[2].textContent = `TOTAL (${total.length})`;
+    }
 
-    main();
+    main();  // ⬅️ อยู่นอกฟังก์ชันทั้งหมด
+
   </script>
 </body>
 </html>
