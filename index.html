@@ -54,46 +54,76 @@
   <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/154YVMJYcJ8_5q_hNknll3XwVwIGvNst4G13ACYpywdY/gviz/tq?tqx=out:json&sheet=OPEN%20TRADES';
 
-    async function fetchSheetTokens() {
-      const res = await fetch(sheetUrl);
-      const text = await res.text();
-      const json = JSON.parse(text.substr(47).slice(0, -2));
-      const rows = json.table.rows;
-      return rows.slice(3).map(r => ({
-        status: r.c[1]?.v?.trim(),
-        name: r.c[2]?.v?.trim(),
-        chain: r.c[3]?.v?.trim(),
-        contract: r.c[4]?.v?.trim(),
-        quantity: parseFloat(r.c[5]?.v || 0),
-        investment: parseFloat(r.c[6]?.v || 0),
-        entry: parseFloat(r.c[7]?.v || 0),
-        current: parseFloat(r.c[8]?.v || 0),
-        value: parseFloat(r.c[9]?.v || 0),
-        profit: parseFloat(r.c[10]?.v || 0),
-        highInvestment: parseFloat(r.c[6]?.v || 0),  // H
-        lowInvestment: parseFloat(r.c[9]?.v || 0),   // K
-        totalInvestment: parseFloat(r.c[12]?.v || 0) // N
-      })).filter(t =>
-        t.status?.trim() &&
-        t.name?.trim() &&
-        t.chain?.trim() &&
-        t.contract?.trim()
-      );
-    }
+async function fetchSheetTokens() {
+  const res = await fetch(sheetUrl);
+  const text = await res.text();
+  const json = JSON.parse(text.substr(47).slice(0, -2));
+  const rows = json.table.rows;
 
-    function renderRows(data) {
+  return rows.slice(3).map(r => ({
+    status: r.c[1]?.v?.trim(),
+    name: r.c[2]?.v?.trim(),
+    chain: r.c[3]?.v?.trim(),
+    contract: r.c[4]?.v?.trim(),
+
+    // HIGH
+    highEntry: parseFloat(r.c[5]?.v || 0),
+    highQty: parseFloat(r.c[6]?.v || 0),
+    highInv: parseFloat(r.c[7]?.v || 0),
+
+    // LOW
+    lowEntry: parseFloat(r.c[8]?.v || 0),
+    lowQty: parseFloat(r.c[9]?.v || 0),
+    lowInv: parseFloat(r.c[10]?.v || 0),
+
+    // TOTAL
+    totalEntry: parseFloat(r.c[11]?.v || 0),
+    totalQty: parseFloat(r.c[12]?.v || 0),
+    totalInv: parseFloat(r.c[13]?.v || 0),
+
+    // Current price & profit (ใช้ร่วมกัน)
+    current: parseFloat(r.c[14]?.v || 0),
+    value: parseFloat(r.c[15]?.v || 0),
+    profit: parseFloat(r.c[16]?.v || 0),
+  })).filter(t =>
+    t.status?.trim() &&
+    t.name?.trim() &&
+    t.chain?.trim() &&
+    t.contract?.trim()
+  );
+}
+    function renderRows(data, type) {
       const tbody = document.getElementById('price-table');
       tbody.innerHTML = '';
+
       data.forEach(row => {
+        let entry, qty, inv;
+        if (type === 'high') {
+          if (row.highInv === 0) return;
+          entry = row.highEntry;
+          qty = row.highQty;
+          inv = row.highInv;
+        } else if (type === 'low') {
+          if (row.lowInv === 0) return;
+          entry = row.lowEntry;
+          qty = row.lowQty;
+          inv = row.lowInv;
+        } else {
+          if (row.totalInv === 0) return;
+          entry = row.totalEntry;
+          qty = row.totalQty;
+          inv = row.totalInv;
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${row.status}</td>
           <td>${row.name}</td>
           <td>${row.chain}</td>
           <td>${row.contract}</td>
-          <td>${row.quantity.toLocaleString()}</td>
-          <td>$${row.investment.toLocaleString()}</td>
-          <td>$${row.entry.toFixed(6)}</td>
+          <td>${qty.toLocaleString()}</td>
+          <td>$${inv.toLocaleString()}</td>
+          <td>$${entry.toFixed(6)}</td>
           <td>$${row.current.toFixed(6)}</td>
           <td>$${row.value.toLocaleString()}</td>
           <td>${row.profit.toFixed(2)}%</td>
@@ -120,13 +150,13 @@
       }
 
       highBtn.onclick = () => {
-        clearActive(); highBtn.classList.add('active'); renderRows(high);
+        clearActive(); highBtn.classList.add('active'); renderRows(data, 'high');
       }
       lowBtn.onclick = () => {
-        clearActive(); lowBtn.classList.add('active'); renderRows(low);
+        clearActive(); lowBtn.classList.add('active'); renderRows(data, 'low');
       }
       totalBtn.onclick = () => {
-        clearActive(); totalBtn.classList.add('active'); renderRows(total);
+        clearActive(); totalBtn.classList.add('active'); renderRows(data, 'total');
       }
 
       totalBtn.click(); // default view
