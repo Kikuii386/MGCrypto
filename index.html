@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta property="og:title" content="🌻💖🐻My Crypto Tracker😍⭐🍕">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f4f4f4; }
+    td.positive { color: green; }
+    td.negative { color: red; }
+    tr.updated { background-color: #e6ffe6; transition: background-color 1s ease; }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;">🌼💖🐻Crypto Tracker😍⭐️🍕</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Token</th>
+        <th>Chain</th>
+        <th>Quantity</th>
+        <th>Entry Price</th>
+        <th>Current Price</th>
+        <th>Total Value</th>
+        <th>Profit %</th>
+      </tr>
+    </thead>
+    <tbody id="price-table"></tbody>
+  </table>
+
+  <script>
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/154YVMJYcJ8_5q_hNknll3XwVwIGvNst4G13ACYpywdY/gviz/tq?tqx=out:json';
+    let oldPrices = {};
+    let portfolioData = [];
+
+    async function fetchSheetTokens() {
+      const res = await fetch(sheetUrl);
+      const text = await res.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows;
+      return rows.map(r => ({
+        name: r.c[0]?.v?.trim(),
+        chain: r.c[1]?.v?.trim(),
+        contract: r.c[3]?.v?.trim(),
+        quantity: parseFloat(r.c[4]?.v || 0),
+        entry: parseFloat(r.c[6]?.v || 0)
+      })).filter(t => t.contract && t.quantity > 0);
+    }
+
+    function renderRows(data) {
+      const tbody = document.getElementById('price-table');
+      tbody.innerHTML = '';
+
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('id', row.contract);
+        const changeClass = row.profitPct >= 0 ? 'positive' : 'negative';
+        tr.innerHTML = `
+          <td>${row.name}</td>
+          <td>${row.chain}</td>
+          <td>${row.quantity.toFixed(2)}</td>
+          <td>$${row.entry.toFixed(6)}</td>
+          <td class="price">$${row.currentPrice.toFixed(6)}</td>
+          <td class="value">$${row.totalValue.toFixed(2)}</td>
+          <td class="${changeClass} profit">${row.profitPct.toFixed(2)}%</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function fetchAndRender() {
+      const tokens = await fetchSheetTokens();
+      portfolioData = await Promise.all(tokens.map(async token => {
+        const url = `https://api.dexscreener.com/latest/dex/tokens/${token.contract}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          const info = data.pairs?.[0];
+          if (!info) return null;
+
+          const currentPrice = parseFloat(info.priceUsd);
+          const totalValue = currentPrice * token.quantity;
+          const profitPct = ((currentPrice - token.entry) / token.entry) * 100;
+
+          return {
+            ...token,
+            currentPrice,
+            totalValue,
+            profitPct
+          };
+        } catch (err) {
+          console.error('Error fetching', token.contract, err);
+          return null;
+        }
+      }));
+
+      portfolioData = portfolioData.filter(Boolean);
+      portfolioData.sort((a, b) => b.profitPct - a.profitPct);
+      renderRows(portfolioData);
+    }
+
+    async function refreshPrices() {
+      for (let row of portfolioData) {
+        const url = `https://api.dexscreener.com/latest/dex/tokens/${row.contract}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          const info = data.pairs?.[0];
+          if (!info) continue;
+
+          const newPrice = parseFloat(info.priceUsd);
+          const newTotalValue = newPrice * row.quantity;
+          const newProfitPct = ((newPrice - row.entry) / row.entry) * 100;
+
+          const tr = document.getElementById(row.contract);
+          if (!tr) continue;
+
+          if (Math.abs(oldPrices[row.contract] - newPrice) > 0.000001) {
+            oldPrices[row.contract] = newPrice;
+
+            tr.querySelector('.price').textContent = `$${newPrice.toFixed(6)}`;
+            tr.querySelector('.value').textContent = `$${newTotalValue.toFixed(2)}`;
+            const profitTd = tr.querySelector('.profit');
+            profitTd.textContent = `${newProfitPct.toFixed(2)}%`;
+            profitTd.className = `profit ${newProfitPct >= 0 ? 'positive' : 'negative'}`;
+
+            tr.classList.add('updated');
+            setTimeout(() => tr.classList.remove('updated'), 1000);
+          }
+        } catch (err) {
+          console.error('Error updating price for', row.contract, err);
+        }
+      }
+    }
+
+    (async () => {
+      await fetchAndRender();
+      portfolioData.forEach(row => oldPrices[row.contract] = row.currentPrice);
+      setInterval(refreshPrices, 10000);
+    })();
+  </script>
+</body>
+</html>
