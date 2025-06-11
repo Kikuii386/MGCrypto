@@ -40,6 +40,12 @@
         <th>Token</th>
         <th>Chain</th>
         <th>Contract</th>
+        <th>Quantity</th>
+        <th>Investment</th>
+        <th>Entry Price</th>
+        <th>Current Price</th>
+        <th>Total Value</th>
+        <th>Profit %</th>
       </tr>
     </thead>
     <tbody id="price-table"></tbody>
@@ -58,9 +64,15 @@
         name: r.c[2]?.v?.trim(),
         chain: r.c[3]?.v?.trim(),
         contract: r.c[4]?.v?.trim(),
-        highCost: parseFloat(r.c[5]?.v || 0),
-        lowCost: parseFloat(r.c[8]?.v || 0),
-        totalCost: parseFloat(r.c[11]?.v || 0)
+        quantity: parseFloat(r.c[5]?.v || 0),
+        investment: parseFloat(r.c[6]?.v || 0),
+        entry: parseFloat(r.c[7]?.v || 0),
+        current: parseFloat(r.c[8]?.v || 0),
+        value: parseFloat(r.c[9]?.v || 0),
+        profit: parseFloat(r.c[10]?.v || 0),
+        highInvestment: parseFloat(r.c[7]?.v || 0),   // H
+        lowInvestment: parseFloat(r.c[10]?.v || 0),   // K
+        totalInvestment: parseFloat(r.c[13]?.v || 0)  // N
       })).filter(t =>
         t.status?.trim() &&
         t.name?.trim() &&
@@ -79,6 +91,12 @@
           <td>${row.name}</td>
           <td>${row.chain}</td>
           <td>${row.contract}</td>
+          <td>${row.quantity.toLocaleString()}</td>
+          <td>$${row.investment.toLocaleString()}</td>
+          <td>$${row.entry.toFixed(6)}</td>
+          <td>$${row.current.toFixed(6)}</td>
+          <td>$${row.value.toLocaleString()}</td>
+          <td>${row.profit.toFixed(2)}%</td>
         `;
         tbody.appendChild(tr);
       });
@@ -87,9 +105,9 @@
     async function main() {
       const data = await fetchSheetTokens();
 
-      const high = data.filter(d => d.highCost > 0);
-      const low = data.filter(d => d.lowCost > 0);
-      const total = data.filter(d => d.totalCost > 0);
+      const high = data.filter(d => d.highInvestment > 0);
+      const low = data.filter(d => d.lowInvestment > 0);
+      const total = data.filter(d => d.totalInvestment > 0);
 
       const highBtn = document.getElementById('highBtn');
       const lowBtn = document.getElementById('lowBtn');
