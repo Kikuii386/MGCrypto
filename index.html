@@ -181,7 +181,16 @@
     async function main() {
       let rawData = await fetchSheetTokens();
       allData = await enrichWithPrices(rawData);
+      
+      let rawData = await fetchSheetTokens();
+      console.log('จำนวน rawData จาก Sheet =', rawData.length);
+      allData = await enrichWithPrices(rawData);
+      console.log('จำนวน allData หลังเชื่อมราคาจาก DexScreener =', allData.length);
       updateCounts(allData);
+      console.log('High items:', allData.filter(d => d.highInv > 0).map(d => d.name));
+      console.log('Low items:', allData.filter(d => d.lowInv > 0).map(d => d.name));
+      console.log('Total items:', allData.filter(d => d.totalInv > 0).map(d => d.name));
+      
       allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
       renderRows(allData, currentType);
 
