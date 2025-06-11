@@ -181,6 +181,7 @@
     async function main() {
       let rawData = await fetchSheetTokens();
       allData = await enrichWithPrices(rawData);
+      updateCounts(allData);
       allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
       renderRows(allData, currentType);
 
@@ -207,6 +208,15 @@
       document.querySelectorAll('.card').forEach(btn => btn.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
+    function updateCounts(data) {
+    const high = data.filter(d => d.highInv > 0);
+    const low = data.filter(d => d.lowInv > 0);
+    const total = data.filter(d => d.totalInv > 0);
+
+      document.getElementById('highBtn').textContent = `📈 HIGH (${high.length})`;
+      document.getElementById('lowBtn').textContent = `📉 LOW (${low.length})`;
+      document.getElementById('totalBtn').textContent = `💰 TOTAL (${total.length})`;
+}
 
     main();
   </script>
