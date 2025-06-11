@@ -70,9 +70,9 @@
         current: parseFloat(r.c[8]?.v || 0),
         value: parseFloat(r.c[9]?.v || 0),
         profit: parseFloat(r.c[10]?.v || 0),
-        highInvestment: parseFloat(r.c[7]?.v || 0),   // H
-        lowInvestment: parseFloat(r.c[10]?.v || 0),   // K
-        totalInvestment: parseFloat(r.c[13]?.v || 0)  // N
+        highInvestment: parseFloat(r.c[6]?.v || 0),  // H
+        lowInvestment: parseFloat(r.c[9]?.v || 0),   // K
+        totalInvestment: parseFloat(r.c[12]?.v || 0) // N
       })).filter(t =>
         t.status?.trim() &&
         t.name?.trim() &&
