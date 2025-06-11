@@ -65,11 +65,14 @@ tr.updated {
   <span style="font-size: 28px; font-weight: 600; color: #5a412a;">ProfitTracker</span>
 </div>
 
-  <div class="port-summary" id="summary-cards">
-    <div class="card" id="highBtn">📈 HIGH</div>
-    <div class="card" id="lowBtn">📉 LOW</div>
-    <div class="card" id="totalBtn">💰 TOTAL</div>
-  </div>
+  <div class="port-summary" style="justify-content: flex-start; align-items: center;">
+  <label for="portfolioSelect" style="margin-right: 8px; font-weight: 500;">Portfolio:</label>
+  <select id="portfolioSelect" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ccc; background-color: #fff5ea; font-family: Poppins, sans-serif;">
+    <option value="high">HIGH</option>
+    <option value="low">LOW</option>
+    <option value="total" selected>TOTAL</option>
+  </select>
+</div>
 
   <table>
     <thead>
@@ -248,24 +251,11 @@ async function enrichWithPrices(data) {
           allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
           renderRows(allData, currentType);
 
-      document.getElementById('highBtn').onclick = () => {
-        currentType = 'high';
-        setActive('highBtn');
-        renderRows(allData, 'high');
-      }
-      document.getElementById('lowBtn').onclick = () => {
-        currentType = 'low';
-        setActive('lowBtn');
-        renderRows(allData, 'low');
-      }
-      document.getElementById('totalBtn').onclick = () => {
-        currentType = 'total';
-        setActive('totalBtn');
-        renderRows(allData, 'total');
-      }
-      setActive('totalBtn');
-      setInterval(refreshPrices, 10000);
-    }
+          document.getElementById('portfolioSelect').addEventListener('change', e => {
+          currentType = e.target.value;
+          renderRows(allData, currentType);
+          });
+          setInterval(refreshPrices, 10000);
 
     function setActive(id) {
       document.querySelectorAll('.card').forEach(btn => btn.classList.remove('active'));
@@ -276,10 +266,9 @@ async function enrichWithPrices(data) {
     const low = data.filter(d => d.lowInv > 0);
     const total = data.filter(d => d.totalInv > 0);
 
-      document.getElementById('highBtn').textContent = `📈 HIGH (${high.length})`;
-      document.getElementById('lowBtn').textContent = `📉 LOW (${low.length})`;
-      document.getElementById('totalBtn').textContent = `💰 TOTAL (${total.length})`;
-}
+      document.getElementById('portfolioSelect').options[0].textContent = `HIGH (${high.length})`;
+      document.getElementById('portfolioSelect').options[1].textContent = `LOW (${low.length})`;
+      document.getElementById('portfolioSelect').options[2].textContent = `TOTAL (${total.length})`;
 
     main();
   </script>
