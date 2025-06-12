@@ -281,20 +281,24 @@
 <h3 class="text-xl font-semibold text-earth-darkbrown">Assets</h3>
 <div class="flex items-center gap-3">
 <!-- Dropdown Portfolio Selector -->
-<div class="relative inline-block text-left">
-<button class="bg-earth-sage hover:bg-earth-moss text-white px-4 py-2 rounded-md transition text-sm flex items-center" id="toggleDropdownBtn" type="button">
-        Portfolio: <span class="ml-2 font-semibold" id="currentTypeLabel">TOTAL</span>
-<svg class="ml-2 h-4 w-4 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-</svg>
-</button>
-<div class="hidden absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10" id="toggleDropdown">
-<div class="py-1 text-sm text-gray-700">
-<a class="block px-4 py-2 hover:bg-gray-100" data-type="total" href="#">TOTAL</a>
-<a class="block px-4 py-2 hover:bg-gray-100" data-type="high" href="#">HIGH</a>
-<a class="block px-4 py-2 hover:bg-gray-100" data-type="low" href="#">LOW</a>
-</div>
-</div>
+<div class="relative inline-block text-left w-[130px]"> <!-- ✅ กำหนดความกว้างคงที่ -->
+  <button id="toggleDropdownBtn" type="button"
+    class="bg-earth-sage hover:bg-earth-moss text-white px-4 py-2 rounded-md transition text-sm flex justify-between w-full items-center">
+    <span id="currentTypeLabel" class="font-semibold w-full text-center">TOTAL</span> <!-- ✅ ไม่มี "Portfolio:" -->
+    <svg class="ml-2 h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+
+  <div id="toggleDropdown"
+    class="hidden absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
+    <div class="py-1 text-sm text-gray-700">
+      <a href="#" data-type="total" class="block px-4 py-2 hover:bg-gray-100">TOTAL</a>
+      <a href="#" data-type="high" class="block px-4 py-2 hover:bg-gray-100">HIGH</a>
+      <a href="#" data-type="low" class="block px-4 py-2 hover:bg-gray-100">LOW</a>
+    </div>
+  </div>
 </div>
 <!-- Export Button -->
 <button class="border border-earth-tan text-earth-brown hover:bg-earth-tan hover:text-white px-4 py-2 rounded-md transition text-sm">
