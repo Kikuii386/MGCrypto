@@ -142,11 +142,27 @@
         .price-down {
             color: #F44336;
         }
+            .loader {
+      border: 8px solid #f3f3f3; /* พื้นหลัง */
+      border-top: 8px solid #A4AC86; /* earth-sage */
+      border-right: 8px solid #BEA78C; /* earth-tan */
+      border-bottom: 8px solid #8B7355; /* earth-brown */
+      border-left: 8px solid #F5F2EB; /* earth-cream */
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
     </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.left-3{left:0.75rem}.top-0{top:0px}.top-2\.5{top:0.625rem}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-10{margin-bottom:2.5rem}.mb-12{margin-bottom:3rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.mt-1{margin-top:0.25rem}.mt-4{margin-top:1rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2\.5{height:0.625rem}.h-20{height:5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-full{width:100%}.flex-shrink-0{flex-shrink:0}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-8 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(2rem * var(--tw-space-x-reverse));margin-left:calc(2rem * calc(1 - var(--tw-space-x-reverse)))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-gray-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(229 231 235 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-earth-tan{--tw-border-opacity:1;border-color:rgb(190 167 140 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-earth-cream{--tw-bg-opacity:1;background-color:rgb(245 242 235 / var(--tw-bg-opacity, 1))}.bg-earth-cream\/50{background-color:rgb(245 242 235 / 0.5)}.bg-earth-darkbrown{--tw-bg-opacity:1;background-color:rgb(94 75 60 / var(--tw-bg-opacity, 1))}.bg-earth-sage{--tw-bg-opacity:1;background-color:rgb(164 172 134 / var(--tw-bg-opacity, 1))}.bg-earth-tan{--tw-bg-opacity:1;background-color:rgb(190 167 140 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pl-10{padding-left:2.5rem}.pr-4{padding-right:1rem}.text-left{text-align:left}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tracking-wider{letter-spacing:0.05em}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-earth-brown{--tw-text-opacity:1;color:rgb(139 115 85 / var(--tw-text-opacity, 1))}.text-earth-darkbrown{--tw-text-opacity:1;color:rgb(94 75 60 / var(--tw-text-opacity, 1))}.text-earth-moss{--tw-text-opacity:1;color:rgb(107 125 94 / var(--tw-text-opacity, 1))}.text-earth-stone{--tw-text-opacity:1;color:rgb(74 74 72 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-green-800{--tw-text-opacity:1;color:rgb(22 101 52 / var(--tw-text-opacity, 1))}.text-red-800{--tw-text-opacity:1;color:rgb(153 27 27 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-earth-cream\/20:hover{background-color:rgb(245 242 235 / 0.2)}.hover\:bg-earth-moss:hover{--tw-bg-opacity:1;background-color:rgb(107 125 94 / var(--tw-bg-opacity, 1))}.hover\:bg-earth-tan:hover{--tw-bg-opacity:1;background-color:rgb(190 167 140 / var(--tw-bg-opacity, 1))}.hover\:text-earth-darkbrown:hover{--tw-text-opacity:1;color:rgb(94 75 60 / var(--tw-text-opacity, 1))}.hover\:text-earth-tan:hover{--tw-text-opacity:1;color:rgb(190 167 140 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-transparent:focus{border-color:transparent}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-earth-sage:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(164 172 134 / var(--tw-ring-opacity, 1))}@media (min-width: 768px){.md\:mb-0{margin-bottom:0px}.md\:mt-0{margin-top:0px}.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-64{width:16rem}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}}</style></head>
 <body>
-<div id="toggleDropdown"
+  <div id="toggleDropdown"
   class="hidden absolute w-36 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-[9999]">
   <div class="py-1 text-sm text-gray-700">
     <a href="#" data-type="total" class="block px-4 py-2 hover:bg-gray-100">TOTAL</a>
@@ -298,7 +314,7 @@
               d="M21 21l-6-6m2.5-5.5a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z" />
           </svg>
         </div>
-          <!-- เพิ่มปุ่ม Filter Dropdown ตรงนี้ -->
+  <!-- เพิ่มปุ่ม dropdown ตรงนี้ -->
   <div class="relative inline-block text-left w-[100px]">
     <button id="toggleDropdownBtn" type="button"
       class="bg-earth-sage hover:bg-earth-moss text-white px-4 py-2 rounded-md transition text-sm flex justify-between w-full items-center">
@@ -321,13 +337,13 @@
 <table class="w-full">
 <thead class="bg-earth-cream/50 sticky top-0 z-10">
   <tr>
-    <th class="px-6 py-3 text-left text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Asset</th>
-    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Price</th>
-    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">P/L</th>
-    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Holdings</th>
-    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Value</th>
-    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Allocation</th>
-    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Actions</th>
+    <th class="px-6 py-3 text-left text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/50 backdrop-blur">Asset</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/50 backdrop-blur">Price</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/50 backdrop-blur">P/L</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/50 backdrop-blur">Holdings</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/50 backdrop-blur">Value</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/50 backdrop-blur">Allocation</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/50 backdrop-blur">Actions</th>
   </tr>
 </thead>
 <tbody class="divide-y divide-gray-200" id="portfolio-body"></tbody>
@@ -574,6 +590,48 @@ async function enrichWithPrices(data) {
   return results;
 }
 
+    function renderRows(data, type) {
+      const tbody = document.getElementById('portfolio-body');
+      tbody.innerHTML = '';
+
+      data.forEach(row => {
+        let entry, qty, inv;
+        if (type === 'high') {
+          if (row.highInv === 0) return;
+          entry = row.highEntry;
+          qty = row.highQty;
+          inv = row.highInv;
+        } else if (type === 'low') {
+          if (row.lowInv === 0) return;
+          entry = row.lowEntry;
+          qty = row.lowQty;
+          inv = row.lowInv;
+        } else {
+          if (row.totalInv === 0) return;
+          entry = row.totalEntry;
+          qty = row.totalQty;
+          inv = row.totalInv;
+        }
+
+        const totalValue = qty * row.currentPrice;
+        const profitPct = ((row.currentPrice - entry) / entry) * 100;
+        const changeClass = profitPct >= 0 ? 'positive' : 'negative';
+
+        const tr = document.createElement('tr');
+        tr.setAttribute('id', row.contract);
+        tr.innerHTML = `
+          <td>${row.name}</td>
+          <td>${row.chain}</td>
+          <td>${qty.toLocaleString()}</td>
+          <td>$${entry.toFixed(6)}</td>
+          <td class="price">$${row.currentPrice.toFixed(6)}</td>
+          <td class="value">$${totalValue.toFixed(2)}</td>
+          <td class="profit ${changeClass}">${profitPct.toFixed(2)}%</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
     async function refreshPrices() {
       for (let row of allData) {
         try {
@@ -608,7 +666,11 @@ async function enrichWithPrices(data) {
       }
     }
 
+
       async function main() {
+          showLoading();
+          const tbody = document.getElementById('portfolio-body');
+
           let rawData = await fetchSheetTokens();
           console.log('จำนวน rawData จาก Sheet =', rawData.length);
 
@@ -631,6 +693,19 @@ async function enrichWithPrices(data) {
       setInterval(refreshPrices, 10000);  // ⬅️ ปิดฟังก์ชัน main ตรงนี้
     } // ✅ ปิด main
 
+  function showLoading() {
+  const tbody = document.getElementById('portfolio-body');
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="7" class="py-12">
+        <div class="flex flex-col items-center justify-center">
+          <div class="loader"></div>
+          <div class="mt-4 text-earth-brown text-lg font-semibold" style="font-family: 'Inter', sans-serif;">LOADING...</div>
+        </div>
+      </td>
+    </tr>
+  `;
+}
     function setActive(id) {
       document.querySelectorAll('.card').forEach(btn => btn.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -655,22 +730,26 @@ const label = document.getElementById('currentTypeLabel');
 
 dropdownBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
-  dropdownMenu.classList.remove('hidden');
+  // คำนวณตำแหน่งปุ่ม
   const rect = dropdownBtn.getBoundingClientRect();
   dropdownMenu.style.position = 'absolute';
-  dropdownMenu.style.top = `${rect.bottom + window.scrollY + 6}px`;
-  dropdownMenu.style.left = `${rect.right - dropdownMenu.offsetWidth + window.scrollX}px`;
+  dropdownMenu.style.top = `${rect.bottom + window.scrollY + 6}px`; // 6px margin
+  dropdownMenu.style.left = `${rect.left + window.scrollX}px`;
   dropdownMenu.classList.toggle('hidden');
 });
 
 // เลือก type
 dropdownMenu?.querySelectorAll('[data-type]').forEach(item => {
-  item.addEventListener('click', (e) => {
+  item.addEventListener('click', async (e) => {
     e.preventDefault();
     currentType = item.dataset.type;
     label.textContent = currentType.toUpperCase();
     dropdownMenu.classList.add('hidden');
-    renderRows(allData, currentType);
+    showLoading(); // แสดง Loader
+
+    // โหลดข้อมูลใหม่แบบ async
+    const newData = await fetchDataForType(currentType);
+    renderRows(newData, currentType); // Loader จะหายเมื่อข้อมูลมา
   });
 });
 
@@ -706,7 +785,7 @@ function renderRows(data, type) {
     const allocation = (value / totalValue) * 100;
 
     const tr = document.createElement('tr');
-    tr.className = 'hover:bg-earth-cream/20 transition';
+    tr.className = 'hover:bg-earth-cream/30 transition';
     tr.innerHTML = `
       <td class="px-6 py-4 whitespace-nowrap">
         <div class="flex items-center">
