@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Earth Crypto Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        earth: {
+                            darkbrown: '#5E4B3C',
+                            brown: '#8B7355',
+                            tan: '#BEA78C',
+                            sage: '#A4AC86',
+                            moss: '#6B7D5E',
+                            stone: '#4A4A48',
+                            cream: '#F5F2EB',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F2EB;
+            color: #4A4A48;
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #A4AC86;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .active::after {
+            width: 100%;
+        }
+        
+        .section-heading {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            bottom: -8px;
+            left: 0;
+            background-color: #A4AC86;
+        }
+        
+        .crypto-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .crypto-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(94, 75, 60, 0.15);
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .tab {
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: #A4AC86;
+            color: white;
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: #BEA78C;
+            color: white;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: #5E4B3C;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .price-up {
+            color: #4CAF50;
+        }
+        
+        .price-down {
+            color: #F44336;
+        }
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.left-3{left:0.75rem}.top-0{top:0px}.top-2\.5{top:0.625rem}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-10{margin-bottom:2.5rem}.mb-12{margin-bottom:3rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.mt-1{margin-top:0.25rem}.mt-4{margin-top:1rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2\.5{height:0.625rem}.h-20{height:5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-full{width:100%}.flex-shrink-0{flex-shrink:0}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-8 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(2rem * var(--tw-space-x-reverse));margin-left:calc(2rem * calc(1 - var(--tw-space-x-reverse)))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-gray-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(229 231 235 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-earth-tan{--tw-border-opacity:1;border-color:rgb(190 167 140 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-earth-cream{--tw-bg-opacity:1;background-color:rgb(245 242 235 / var(--tw-bg-opacity, 1))}.bg-earth-cream\/50{background-color:rgb(245 242 235 / 0.5)}.bg-earth-darkbrown{--tw-bg-opacity:1;background-color:rgb(94 75 60 / var(--tw-bg-opacity, 1))}.bg-earth-sage{--tw-bg-opacity:1;background-color:rgb(164 172 134 / var(--tw-bg-opacity, 1))}.bg-earth-tan{--tw-bg-opacity:1;background-color:rgb(190 167 140 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pl-10{padding-left:2.5rem}.pr-4{padding-right:1rem}.text-left{text-align:left}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tracking-wider{letter-spacing:0.05em}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-earth-brown{--tw-text-opacity:1;color:rgb(139 115 85 / var(--tw-text-opacity, 1))}.text-earth-darkbrown{--tw-text-opacity:1;color:rgb(94 75 60 / var(--tw-text-opacity, 1))}.text-earth-moss{--tw-text-opacity:1;color:rgb(107 125 94 / var(--tw-text-opacity, 1))}.text-earth-stone{--tw-text-opacity:1;color:rgb(74 74 72 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-green-800{--tw-text-opacity:1;color:rgb(22 101 52 / var(--tw-text-opacity, 1))}.text-red-800{--tw-text-opacity:1;color:rgb(153 27 27 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-earth-cream\/20:hover{background-color:rgb(245 242 235 / 0.2)}.hover\:bg-earth-moss:hover{--tw-bg-opacity:1;background-color:rgb(107 125 94 / var(--tw-bg-opacity, 1))}.hover\:bg-earth-tan:hover{--tw-bg-opacity:1;background-color:rgb(190 167 140 / var(--tw-bg-opacity, 1))}.hover\:text-earth-darkbrown:hover{--tw-text-opacity:1;color:rgb(94 75 60 / var(--tw-text-opacity, 1))}.hover\:text-earth-tan:hover{--tw-text-opacity:1;color:rgb(190 167 140 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-transparent:focus{border-color:transparent}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-earth-sage:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(164 172 134 / var(--tw-ring-opacity, 1))}@media (min-width: 768px){.md\:mb-0{margin-bottom:0px}.md\:mt-0{margin-top:0px}.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-64{width:16rem}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}}</style></head>
+<body>
+<div class="min-h-screen flex flex-col">
+<!-- Header/Navigation -->
+<header class="bg-earth-darkbrown text-white sticky top-0 z-40 shadow-md">
+<div class="container mx-auto px-4 py-4 flex justify-between items-center">
+<div class="flex items-center space-x-2">
+<svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+<h1 class="text-xl font-bold">Earth Crypto</h1>
+</div>
+<nav class="hidden md:flex space-x-8">
+<a class="nav-link active hover:text-earth-tan transition" href="#dashboard">Dashboard</a>
+<a class="nav-link hover:text-earth-tan transition" href="#portfolio">Portfolio</a>
+<a class="nav-link hover:text-earth-tan transition" href="#markets">Markets</a>
+<a class="nav-link hover:text-earth-tan transition" href="#analytics">Analytics</a>
+<a class="nav-link hover:text-earth-tan transition" href="#settings">Settings</a>
+</nav>
+<div class="flex items-center space-x-4">
+<button class="bg-earth-sage hover:bg-earth-moss text-white px-4 py-2 rounded-md transition hidden md:block">Connect Wallet</button>
+<button class="md:hidden">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</header>
+<!-- Dashboard Summary -->
+<section class="py-10" id="dashboard">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row justify-between items-start mb-8">
+<div>
+<h2 class="text-3xl font-bold mb-2 section-heading">Dashboard</h2>
+<p class="text-earth-brown mt-4">Overview of your crypto portfolio performance</p>
+</div>
+<div class="mt-4 md:mt-0 flex space-x-2">
+<button class="tab active px-4 py-2 rounded-md">1D</button>
+<button class="tab px-4 py-2 rounded-md">1W</button>
+<button class="tab px-4 py-2 rounded-md">1M</button>
+<button class="tab px-4 py-2 rounded-md">1Y</button>
+<button class="tab px-4 py-2 rounded-md">All</button>
+</div>
+</div>
+<!-- Portfolio Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<div class="bg-white rounded-lg shadow-md p-6 animate-fadeIn" style="animation-delay: 0.1s;">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-earth-brown">Total Balance</p>
+<h3 class="text-2xl font-bold text-earth-darkbrown">$24,567.89</h3>
+</div>
+<div class="bg-green-100 text-green-800 px-2 py-1 rounded-md text-sm flex items-center">
+<svg class="h-4 w-4 mr-1" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" fill-rule="evenodd"></path>
+</svg>
+                                +5.23%
+                            </div>
+</div>
+<div class="h-20">
+<canvas id="balanceChart"></canvas>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md p-6 animate-fadeIn" style="animation-delay: 0.2s;">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-earth-brown">24h Change</p>
+<h3 class="text-2xl font-bold text-green-600">+$1,284.32</h3>
+</div>
+<div class="bg-green-100 text-green-800 px-2 py-1 rounded-md text-sm flex items-center">
+<svg class="h-4 w-4 mr-1" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" fill-rule="evenodd"></path>
+</svg>
+                                +5.23%
+                            </div>
+</div>
+<div class="flex justify-between text-sm text-earth-brown">
+<div>
+<p>Best Performer</p>
+<p class="font-medium text-earth-darkbrown">ETH +12.4%</p>
+</div>
+<div>
+<p>Worst Performer</p>
+<p class="font-medium text-earth-darkbrown">SOL -3.2%</p>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md p-6 animate-fadeIn" style="animation-delay: 0.3s;">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-earth-brown">Portfolio Allocation</p>
+<h3 class="text-2xl font-bold text-earth-darkbrown">8 Assets</h3>
+</div>
+<div class="tooltip">
+<svg class="h-5 w-5 text-earth-brown" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" fill-rule="evenodd"></path>
+</svg>
+<span class="tooltip-text">Your asset distribution</span>
+</div>
+</div>
+<div class="h-20 flex justify-center">
+<canvas id="allocationChart"></canvas>
+</div>
+</div>
+</div>
+<!-- Portfolio Performance Chart -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-10">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-xl font-semibold text-earth-darkbrown">Portfolio Performance</h3>
+<div class="flex items-center space-x-2">
+<div class="flex items-center">
+<div class="w-3 h-3 bg-earth-sage rounded-full mr-1"></div>
+<span class="text-sm text-earth-brown">Portfolio</span>
+</div>
+<div class="flex items-center">
+<div class="w-3 h-3 bg-earth-tan rounded-full mr-1"></div>
+<span class="text-sm text-earth-brown">Bitcoin</span>
+</div>
+</div>
+</div>
+<div class="chart-container">
+<canvas id="performanceChart"></canvas>
+</div>
+</div>
+</div>
+</section>
+<!-- Portfolio Section -->
+<section class="py-10 bg-earth-cream" id="portfolio">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold mb-12 section-heading">Your Portfolio</h2>
+<div class="bg-white rounded-lg shadow-md overflow-hidden mb-10">
+<div class="p-6 border-b border-gray-200">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-earth-darkbrown">Assets</h3>
+      <div class="flex items-center gap-3">
+        <!-- Search Bar -->
+        <div class="relative">
+          <input type="text" placeholder="Search assets..."
+            class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-earth-sage transition text-sm">
+          <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2.5-5.5a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z" />
+          </svg>
+        </div>
+<!-- Dropdown Portfolio Selector -->
+        <div class="relative inline-block text-left w-[100px]">
+          <button id="toggleDropdownBtn" type="button"
+            class="bg-earth-sage hover:bg-earth-moss text-white px-4 py-2 rounded-md transition text-sm flex justify-between w-full items-center">
+            <span id="currentTypeLabel" class="font-semibold w-full text-center">TOTAL</span>
+            <svg class="ml-2 h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div id="toggleDropdown"
+            class="hidden absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-[9999]">
+            <div class="py-1 text-sm text-gray-700">
+              <a href="#" data-type="total" class="block px-4 py-2 hover:bg-gray-100">TOTAL</a>
+              <a href="#" data-type="high" class="block px-4 py-2 hover:bg-gray-100">HIGH</a>
+              <a href="#" data-type="low" class="block px-4 py-2 hover:bg-gray-100">LOW</a>
+            </div>
+          </div>
+        </div>
+<!-- Export Button -->
+        <button class="border border-earth-tan text-earth-brown hover:bg-earth-tan hover:text-white px-4 py-2 rounded-md transition text-sm">
+          Export
+        </button>
+      </div>
+    </div>
+</div>
+<!-- Assets Table -->
+<div class="overflow-x-auto">
+<table class="w-full">
+<thead class="bg-earth-cream/50 sticky top-0 z-10">
+  <tr>
+    <th class="px-6 py-3 text-left text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Asset</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Price</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">P/L</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Holdings</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Value</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Allocation</th>
+    <th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider bg-earth-cream/90 backdrop-blur">Actions</th>
+  </tr>
+</thead>
+<tbody class="divide-y divide-gray-200" id="portfolio-body"></tbody>
+</table>
+</div>
+</div>
+<!-- Recent Transactions -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<div class="p-6 border-b border-gray-200">
+<div class="flex justify-between items-center">
+<h3 class="text-xl font-semibold text-earth-darkbrown">Recent Transactions</h3>
+<button class="text-earth-moss hover:text-earth-darkbrown transition text-sm flex items-center">
+<span>View All</span>
+<svg class="h-4 w-4 ml-1" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full">
+<thead class="bg-earth-cream/50">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-medium text-earth-stone uppercase tracking-wider">Type</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-earth-stone uppercase tracking-wider">Asset</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Amount</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Price</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Value</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Date</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200">
+<tr class="hover:bg-earth-cream/20 transition">
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs">Buy</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-6 w-6 mr-2">
+<svg class="w-full h-full" viewbox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" fill-rule="evenodd">
+<circle cx="16" cy="16" fill="#627EEA" r="16"></circle>
+<g fill="#FFF" fill-rule="nonzero">
+<path d="M16.498 4v8.87l7.497 3.35z" fill-opacity=".602"></path>
+<path d="M16.498 4L9 16.22l7.498-3.35z"></path>
+<path d="M16.498 21.968v6.027L24 17.616z" fill-opacity=".602"></path>
+<path d="M16.498 27.995v-6.028L9 17.616z"></path>
+<path d="M16.498 20.573l7.497-4.353-7.497-3.348z" fill-opacity=".2"></path>
+<path d="M9 16.22l7.498 4.353v-7.701z" fill-opacity=".602"></path>
+</g>
+</g>
+</svg>
+</div>
+<span>Ethereum (ETH)</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">0.5 ETH</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$2,245.67</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$1,122.84</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">2023-05-15</td>
+</tr>
+<tr class="hover:bg-earth-cream/20 transition">
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="bg-red-100 text-red-800 px-2 py-1 rounded-md text-xs">Sell</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-6 w-6 mr-2">
+<svg class="w-full h-full" viewbox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<g fill="none">
+<circle cx="16" cy="16" fill="#0033AD" r="16"></circle>
+<path d="M16.026 8.334c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-4.773 1.268c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm9.546 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-11.556 3.073c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm13.566 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-14.7 3.936c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm15.834 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-11.556 3.073c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm7.278 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-4.773 1.268c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-5.907 1.805c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm11.814 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-9.546 2.536c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm7.278 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-3.639 1.268c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-5.907 1.805c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm11.814 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-9.546 2.536c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm7.278 0c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176zm-3.639 1.268c-.164 0-.321.063-.439.176-.118.113-.184.266-.184.425 0 .159.066.312.184.425.118.113.275.176.439.176.164 0 .321-.063.439-.176.118-.113.184-.266.184-.425 0-.159-.066-.312-.184-.425-.118-.113-.275-.176-.439-.176z" fill="#FFF"></path>
+</g>
+</svg>
+</div>
+<span>Cardano (ADA)</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">500 ADA</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$0.52</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$260.00</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">2023-05-12</td>
+</tr>
+<tr class="hover:bg-earth-cream/20 transition">
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs">Buy</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-6 w-6 mr-2">
+<svg class="w-full h-full" viewbox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" fill-rule="evenodd">
+<circle cx="16" cy="16" fill="#F7931A" r="16"></circle>
+<path d="M23.189 14.02c.314-2.096-1.283-3.223-3.465-3.975l.708-2.84-1.728-.43-.69 2.765c-.454-.114-.92-.22-1.385-.326l.695-2.783L15.596 6l-.708 2.839c-.376-.086-.746-.17-1.104-.26l.002-.009-2.384-.595-.46 1.846s1.283.294 1.256.312c.7.175.826.638.805 1.006l-.806 3.235c.048.012.11.03.18.057l-.183-.045-1.13 4.532c-.086.212-.303.531-.793.41.018.025-1.256-.313-1.256-.313l-.858 1.978 2.25.561c.418.105.828.215 1.231.318l-.715 2.872 1.727.43.708-2.84c.472.127.93.245 1.378.357l-.706 2.828 1.728.43.715-2.866c2.948.558 5.164.333 6.097-2.333.752-2.146-.037-3.385-1.588-4.192 1.13-.26 1.98-1.003 2.207-2.538zm-3.95 5.538c-.533 2.147-4.148.986-5.32.695l.95-3.805c1.172.293 4.929.872 4.37 3.11zm.535-5.569c-.487 1.953-3.495.96-4.47.717l.86-3.45c.975.243 4.118.696 3.61 2.733z" fill="#FFF" fill-rule="nonzero"></path>
+</g>
+</svg>
+</div>
+<span>Bitcoin (BTC)</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">0.05 BTC</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$42,384.21</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$2,119.21</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">2023-05-10</td>
+</tr>
+<tr class="hover:bg-earth-cream/20 transition">
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs">Transfer</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-6 w-6 mr-2">
+<svg class="w-full h-full" viewbox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<circle cx="16" cy="16" fill="#66F9A1" r="16"></circle>
+<path d="M9.925 19.687a.59.59 0 01.415-.17h14.366a.29.29 0 01.207.497l-2.838 2.815a.59.59 0 01-.415.171H7.294a.291.291 0 01-.207-.498l2.838-2.815zm0-10.517a.59.59 0 01.415-.17h14.366a.291.291 0 01.207.498l-2.838 2.815a.59.59 0 01-.415.17H7.294a.291.291 0 01-.207-.498l2.838-2.815zm14.988 5.259a.59.59 0 00-.415-.17H10.132a.291.291 0 00-.207.498l2.838 2.815a.59.59 0 00.415.17h14.366a.291.291 0 00.207-.498l-2.838-2.815z" fill="#00000D"></path>
+</svg>
+</div>
+<span>Solana (SOL)</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">10 SOL</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$98.32</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">$983.20</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">2023-05-08</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<!-- Markets Section -->
+<section class="py-10 bg-white" id="markets">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold mb-12 section-heading">Markets</h2>
+<div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+<div class="mb-4 md:mb-0">
+<div class="relative">
+<input class="pl-10 pr-4 py-2 border border-earth-tan rounded-md focus:outline-none focus:ring-2 focus:ring-earth-sage focus:border-transparent w-full md:w-64" placeholder="Search assets..." type="text"/>
+<svg class="h-5 w-5 text-earth-brown absolute left-3 top-2.5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" fill-rule="evenodd"></path>
+</svg>
+</div>
+</div>
+<div class="flex space-x-2">
+<button class="bg-earth-sage text-white px-4 py-2 rounded-md">All</button>
+<button class="bg-white border border-earth-tan text-earth-brown px-4 py-2 rounded-md">Gainers</button>
+<button class="bg-white border border-earth-tan text-earth-brown px-4 py-2 rounded-md">Losers</button>
+<button class="bg-white border border-earth-tan text-earth-brown px-4 py-2 rounded-md">Watchlist</button>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full">
+<thead class="bg-earth-cream/50">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-medium text-earth-stone uppercase tracking-wider">#</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-earth-stone uppercase tracking-wider">Asset</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Price</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">24h %</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">7d %</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Market Cap</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Volume (24h)</th>
+<th class="px-6 py-3 text-right text-xs font-medium text-earth-stone uppercase tracking-wider">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200">
+<tr class="hover:bg-earth-cream/20 transition">
+<td class="px-6 py-4 whitespace-nowrap">1</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-8 w-8 mr-3">
+<svg class="w-full h-full" viewbox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" fill-rule="evenodd">
+<circle cx="16" cy="16" fill="#F7931A" r="16"></circle>
+<path a="document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);&quot;;b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var" d="M23.189 14.02c.314-2.096-1.283-3.223-3.465-3.975l.708-2.84-1.728-.43-.69 2.765c-.454-.114-.92-.22-1.385-.326l.695-2.783L15.596 6l-.708 2.839c-.376-.086-.746-.17-1.104-.26l.002-.009-2.384-.595-.46 1.846s1.283.294 1.256.312c.7.175.826.638.805 1.006l-.806 3.235c.048.012.11.03.18.057l-.183-.045-1.13 4.532c-.086.212-.303.531-.793.41.018.025-1.256-.313-1.256-.313l-.858 1.978 2.25.561c.418.105.828.215 1.231.318l-.715 2.872 1.727.43.708-2.84c.472.127.93.245 1.378.357l-.706 2.828 1.728.43.715-2.866c2.948.558 5.164.333 &lt;script&gt;(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=" e="document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&amp;&amp;(document.onreadystatechange=e,c())}}}})();&lt;/script" fill="#FFF" fill-rule="nonzero" if(window.addeventlistener)document.addeventlistener('domcontentloaded',c);else{var="" window.__cf$cv$params="{r:'94e7f80b725b4f5d',t:'MTc0OTcxNjg0NS4wMDAwMDA='};var"></path></g></svg></div></div></td></tr></tbody></table></div></div></div></section></div><script>
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/154YVMJYcJ8_5q_hNknll3XwVwIGvNst4G13ACYpywdY/gviz/tq?tqx=out:json&sheet=OPEN%20TRADES';
+    let allData = [];
+    let currentType = 'total';
+    let oldPrices = {};
+
+    async function fetchSheetTokens() {
+      const res = await fetch(sheetUrl);
+      const text = await res.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows;
+
+      return rows.slice(3).map(r => ({
+        name: r.c[2]?.v?.trim(),
+        chain: r.c[3]?.v?.trim(),
+        contract: r.c[4]?.v?.trim(),
+
+        highEntry: parseFloat(r.c[5]?.v || 0),
+        highQty: parseFloat(r.c[6]?.v || 0),
+        highInv: parseFloat(r.c[7]?.v || 0),
+
+        lowEntry: parseFloat(r.c[8]?.v || 0),
+        lowQty: parseFloat(r.c[9]?.v || 0),
+        lowInv: parseFloat(r.c[10]?.v || 0),
+
+        totalEntry: parseFloat(r.c[11]?.v || 0),
+        totalQty: parseFloat(r.c[12]?.v || 0),
+        totalInv: parseFloat(r.c[13]?.v || 0),
+      })).filter(t => t.contract);
+    }
+
+async function enrichWithPrices(data) {
+  const CHUNK_SIZE = 100;
+  const DELAY_MS = 2000;
+  const chunks = [...Array(Math.ceil(data.length / CHUNK_SIZE))].map((_, i) =>
+    data.slice(i * CHUNK_SIZE, i * CHUNK_SIZE + CHUNK_SIZE)
+  );
+
+  let results = [];
+
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    console.log(`🔄 Processing chunk ${i + 1}/${chunks.length}...`);
+
+    const chunkResults = await Promise.all(chunk.map(async row => {
+      try {
+        const url = `https://api.dexscreener.com/latest/dex/tokens/${row.contract}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        const info = json.pairs?.[0];
+
+        if (!info || !info.priceUsd) {
+          console.warn('⛔ DexScreener ไม่มีข้อมูล:', row.name);
+          return null;
+        }
+
+        const currentPrice = parseFloat(info.priceUsd);
+        return { ...row, currentPrice };
+      } catch (e) {
+        console.error('Error fetching price for', row.contract, e);
+        return null;
+      }
+    }));
+
+    results.push(...chunkResults.filter(Boolean));
+    if (i < chunks.length - 1) await new Promise(r => setTimeout(r, DELAY_MS));
+  }
+
+  return results;
+}
+
+    function renderRows(data, type) {
+      const tbody = document.getElementById('price-table');
+      tbody.innerHTML = '';
+
+      data.forEach(row => {
+        let entry, qty, inv;
+        if (type === 'high') {
+          if (row.highInv === 0) return;
+          entry = row.highEntry;
+          qty = row.highQty;
+          inv = row.highInv;
+        } else if (type === 'low') {
+          if (row.lowInv === 0) return;
+          entry = row.lowEntry;
+          qty = row.lowQty;
+          inv = row.lowInv;
+        } else {
+          if (row.totalInv === 0) return;
+          entry = row.totalEntry;
+          qty = row.totalQty;
+          inv = row.totalInv;
+        }
+
+        const totalValue = qty * row.currentPrice;
+        const profitPct = ((row.currentPrice - entry) / entry) * 100;
+        const changeClass = profitPct >= 0 ? 'positive' : 'negative';
+
+        const tr = document.createElement('tr');
+        tr.setAttribute('id', row.contract);
+        tr.innerHTML = `
+          <td>${row.name}</td>
+          <td>${row.chain}</td>
+          <td>${qty.toLocaleString()}</td>
+          <td>$${entry.toFixed(6)}</td>
+          <td class="price">$${row.currentPrice.toFixed(6)}</td>
+          <td class="value">$${totalValue.toFixed(2)}</td>
+          <td class="profit ${changeClass}">${profitPct.toFixed(2)}%</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function refreshPrices() {
+      for (let row of allData) {
+        try {
+          const url = `https://api.dexscreener.com/latest/dex/tokens/${row.contract}`;
+          const res = await fetch(url);
+          const json = await res.json();
+          const info = json.pairs?.[0];
+          if (!info) continue;
+
+          const newPrice = parseFloat(info.priceUsd);
+          const tr = document.getElementById(row.contract);
+          if (!tr) continue;
+
+          const entry = currentType === 'high' ? row.highEntry : currentType === 'low' ? row.lowEntry : row.totalEntry;
+          const qty = currentType === 'high' ? row.highQty : currentType === 'low' ? row.lowQty : row.totalQty;
+          const newTotalValue = newPrice * qty;
+          const newProfitPct = ((newPrice - entry) / entry) * 100;
+
+          if (Math.abs(oldPrices[row.contract] - newPrice) > 0.000001) {
+            oldPrices[row.contract] = newPrice;
+            tr.querySelector('.price').textContent = `$${newPrice.toFixed(6)}`;
+            tr.querySelector('.value').textContent = `$${newTotalValue.toFixed(2)}`;
+            const profitTd = tr.querySelector('.profit');
+            profitTd.textContent = `${newProfitPct.toFixed(2)}%`;
+            profitTd.className = `profit ${newProfitPct >= 0 ? 'positive' : 'negative'}`;
+            tr.classList.add('updated');
+            setTimeout(() => tr.classList.remove('updated'), 1000);
+          }
+        } catch (e) {
+          console.error('Error updating price for', row.contract, e);
+        }
+      }
+    }
+
+      async function main() {
+          let rawData = await fetchSheetTokens();
+          console.log('จำนวน rawData จาก Sheet =', rawData.length);
+
+          allData = await enrichWithPrices(rawData);
+          console.log('จำนวน allData หลังเชื่อมราคาจาก DexScreener =', allData.length);
+
+          updateCounts(allData);
+          console.log('High items:', allData.filter(d => d.highInv > 0).map(d => d.name));
+          console.log('Low items:', allData.filter(d => d.lowInv > 0).map(d => d.name));
+          console.log('Total items:', allData.filter(d => d.totalInv > 0).map(d => d.name));
+
+          allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
+          renderRows(allData, currentType);
+
+      document.getElementById('portfolioSelect').addEventListener('change', e => {
+        currentType = e.target.value;
+        renderRows(allData, currentType);
+      });
+
+      setInterval(refreshPrices, 10000);  // ⬅️ ปิดฟังก์ชัน main ตรงนี้
+    } // ✅ ปิด main
+
+    function setActive(id) {
+      document.querySelectorAll('.card').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function updateCounts(data) {
+      const high = data.filter(d => d.highInv > 0);
+      const low = data.filter(d => d.lowInv > 0);
+      const total = data.filter(d => d.totalInv > 0);
+
+      document.getElementById('portfolioSelect').options[0].textContent = `HIGH (${high.length})`;
+      document.getElementById('portfolioSelect').options[1].textContent = `LOW (${low.length})`;
+      document.getElementById('portfolioSelect').options[2].textContent = `TOTAL (${total.length})`;
+    }
+
+    main();  // ⬅️ อยู่นอกฟังก์ชันทั้งหมด
+</script>
+<script>
+const dropdownBtn = document.getElementById('toggleDropdownBtn');
+const dropdownMenu = document.getElementById('toggleDropdown');
+const label = document.getElementById('currentTypeLabel');
+
+dropdownBtn?.addEventListener('click', () => {
+  dropdownMenu?.classList.toggle('hidden');
+});
+
+dropdownMenu?.querySelectorAll('[data-type]').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    currentType = item.dataset.type;
+    label.textContent = currentType.toUpperCase();
+    dropdownMenu.classList.add('hidden');
+    renderRows(allData, currentType);
+  });
+});
+</script>
+
+<script>
+function renderRows(data, type) {
+  const tbody = document.getElementById('portfolio-body');
+  tbody.innerHTML = '';
+
+  let filtered = data.filter(row => {
+    if (type === 'high') return row.highInv > 0;
+    if (type === 'low') return row.lowInv > 0;
+    return row.totalInv > 0;
+  });
+
+  const totalValue = filtered.reduce((sum, row) => {
+    let qty = type === 'high' ? row.highQty : type === 'low' ? row.lowQty : row.totalQty;
+    return sum + qty * row.currentPrice;
+  }, 0);
+
+  filtered.forEach(row => {
+    const qty = type === 'high' ? row.highQty : type === 'low' ? row.lowQty : row.totalQty;
+    const entry = type === 'high' ? row.highEntry : type === 'low' ? row.lowEntry : row.totalEntry;
+    const value = qty * row.currentPrice;
+    const profitPct = ((row.currentPrice - entry) / entry) * 100;
+    const allocation = (value / totalValue) * 100;
+
+    const tr = document.createElement('tr');
+
+    tr.className = 'hover:bg-earth-cream/20 transition';
+    tr.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="flex items-center">
+          <img src="${row.logo || ''}" alt="${row.name}" class="h-8 w-8 rounded-full border mr-3">
+          <div>
+            <div class="font-medium text-earth-darkbrown">${row.name}</div>
+            <div class="text-xs text-earth-brown">${row.chain}</div>
+          </div>
+        </div>
+      </td>
+      <td class="px-6 py-4 text-right font-medium">$${row.currentPrice.toFixed(6)}</td>
+      <td class="px-6 py-4 text-right font-medium ${profitPct >= 0 ? 'text-green-600' : 'text-red-500'}">${profitPct.toFixed(2)}%</td>
+      <td class="px-6 py-4 text-right font-medium">${qty.toLocaleString()} ${row.symbol || ''}</td>
+      <td class="px-6 py-4 text-right font-medium">$${value.toFixed(2)}</td>
+      <td class="px-6 py-4 text-right">
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div class="bg-earth-sage h-2.5 rounded-full" style="width: ${allocation.toFixed(0)}%"></div>
+        </div>
+        <div class="text-xs mt-1 text-earth-brown">${allocation.toFixed(0)}%</div>
+      </td>
+      <td class="px-6 py-4 text-right text-sm">
+        <button class="text-earth-moss hover:text-earth-darkbrown transition mr-3">⟳</button>
+        <button class="text-earth-moss hover:text-earth-darkbrown transition">⋯</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+</script>
+</body></html>
