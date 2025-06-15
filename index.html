@@ -576,7 +576,9 @@ async function enrichWithPrices(data) {
         }
 
         const currentPrice = parseFloat(info.priceUsd);
-        return { ...row, currentPrice };
+        const symbol = info.baseToken?.symbol || '';
+        const logo = info.baseToken?.logoURI || 'https://via.placeholder.com/32';
+        return { ...row, currentPrice, symbol, logo };
       } catch (e) {
         console.error('Error fetching price for', row.contract, e);
         return null;
