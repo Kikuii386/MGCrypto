@@ -525,6 +525,12 @@ const sheetUrl = 'https://docs.google.com/spreadsheets/d/154YVMJYcJ8_5q_hNknll3X
     let currentType = 'total';
     let oldPrices = {};
 
+    function fetchDataForType(type) {
+    if (type === 'high') return allData.filter(row => row.highInv > 0);
+    if (type === 'low') return allData.filter(row => row.lowInv > 0);
+    return allData.filter(row => row.totalInv > 0);
+  }
+
     async function fetchSheetTokens() {
       const res = await fetch(sheetUrl);
       const text = await res.text();
@@ -557,38 +563,41 @@ async function enrichWithPrices(data) {
     data.slice(i * CHUNK_SIZE, i * CHUNK_SIZE + CHUNK_SIZE)
   );
 
-  let results = [];
+let results = [];
+  let firstShown = false;
 
-  for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i];
-    console.log(`🔄 Processing chunk ${i + 1}/${chunks.length}...`);
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    try {
+      const url = `https://api.dexscreener.com/latest/dex/tokens/${row.contract}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      const info = json.pairs?.[0];
 
-    const chunkResults = await Promise.all(chunk.map(async row => {
-      try {
-        const url = `https://api.dexscreener.com/latest/dex/tokens/${row.contract}`;
-        const res = await fetch(url);
-        const json = await res.json();
-        const info = json.pairs?.[0];
-
-        if (!info || !info.priceUsd) {
-          console.warn('⛔ DexScreener ไม่มีข้อมูล:', row.name);
-          return null;
-        }
-
-        const currentPrice = parseFloat(info.priceUsd);
-        const symbol = info.baseToken?.symbol || '';
-        const logo = info.baseToken?.logoURI || 'https://via.placeholder.com/32';
-        return { ...row, currentPrice, symbol, logo };
-      } catch (e) {
-        console.error('Error fetching price for', row.contract, e);
-        return null;
+      if (!info || !info.priceUsd) {
+        console.warn('⛔ DexScreener ไม่มีข้อมูล:', row.name);
+        continue;
       }
-    }));
 
-    results.push(...chunkResults.filter(Boolean));
-    if (i < chunks.length - 1) await new Promise(r => setTimeout(r, DELAY_MS));
+      const currentPrice = parseFloat(info.priceUsd);
+      const symbol = info.baseToken?.symbol || '';
+      const logo = info.baseToken?.logoURI || info.imageUrl || info.info?.imageUrl || 'https://via.placeholder.com/32';
+      const enriched = { ...row, currentPrice, symbol, logo };
+      results.push(enriched);
+
+      // แสดงข้อมูลทันทีที่ได้แต่ละเหรียญ
+      allData = results;
+      renderRows(allData, currentType);
+
+      // ซ่อน Loader เมื่อมีข้อมูลแรก
+      if (!firstShown && results.length > 0) {
+        firstShown = true;
+        document.querySelector('.loader')?.parentElement?.parentElement?.parentElement?.remove();
+      }
+    } catch (e) {
+      console.error('Error fetching price for', row.contract, e);
+    }
   }
-
   return results;
 }
 
@@ -676,7 +685,11 @@ async function enrichWithPrices(data) {
           let rawData = await fetchSheetTokens();
           console.log('จำนวน rawData จาก Sheet =', rawData.length);
 
-          allData = await enrichWithPrices(rawData);
+          allData = [];
+          currentType = 'total';
+          await enrichWithPrices(rawData);
+          updateCounts(allData);
+          
           console.log('จำนวน allData หลังเชื่อมราคาจาก DexScreener =', allData.length);
 
           updateCounts(allData);
@@ -685,7 +698,7 @@ async function enrichWithPrices(data) {
           console.log('Total items:', allData.filter(d => d.totalInv > 0).map(d => d.name));
 
           allData.forEach(row => oldPrices[row.contract] = row.currentPrice);
-          renderRows(allData, currentType);
+          
 
       document.getElementById('portfolioSelect').addEventListener('change', e => {
         currentType = e.target.value;
@@ -791,7 +804,7 @@ function renderRows(data, type) {
     tr.innerHTML = `
       <td class="px-6 py-4 whitespace-nowrap">
         <div class="flex items-center">
-          <img src="${row.logo || ''}" alt="${row.name}" class="h-8 w-8 rounded-full border mr-3">
+<img src="${row.logo || 'https://via.placeholder.com/32'}" alt="${row.name}" class="h-8 w-8 rounded-full border mr-3">
           <div>
             <div class="font-medium text-earth-darkbrown">${row.name}</div>
             <div class="text-xs text-earth-brown">${row.chain}</div>
